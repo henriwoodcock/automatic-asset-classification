@@ -39,3 +39,16 @@ https://data.gov.uk/dataset/6f916c63-b142-4929-be09-0861b3c0ce6a/distribution-in
 https://data.gov.uk/search?q=
 
 https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Data%20sets
+
+
+
+## Webscraping for Images
+1. Go to google images
+2. Search your key word. For example "flood gate"
+3. Go to the very bottom of the page (press load more until you cannot anymore)
+4. Open the console on your web browser and enter:
+urls = Array.from(document.querySelectorAll('.rg_di .rg_meta')).map(el=>JSON.parse(el.textContent).ou);
+window.open('data:text/csv;charset=utf-8,' + escape(urls.join('\n')));
+5. Save the csv
+
+This provides you with a database of links to images. This is easier than scraping for the links then downloading the images from the links. However feel free to scrape for the links if not using google images for your data.
