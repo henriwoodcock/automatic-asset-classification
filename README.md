@@ -52,3 +52,7 @@ window.open('data:text/csv;charset=utf-8,' + escape(urls.join('\n')));
 5. Save the csv
 
 This provides you with a database of links to images. This is easier than scraping for the links then downloading the images from the links. However feel free to scrape for the links if not using google images for your data.
+
+
+
+checkout fast.ai image classification on my gists!!!
