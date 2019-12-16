@@ -1,16 +1,38 @@
-from fastai.vision import download_images
-
 loc = "data/web_scrap_db/"
-#download ebmankment images
-download_images(loc + "flood_embankment_image_db.csv", "data/raw/"
-                "embankment")
-#download flood gate images
-download_images(loc + "flood_gate_images_db.csv", "data/raw/flood_gate")
-#download flood wall images
-download_images(loc + "flood_wall_image_db.csv", "data/raw/flood_wall")
-#download outfall images
-download_images(loc + "outfall_image_db.csv", "data/raw/outfall")
-#download resevoir images
-download_images(loc + "reservoir_image_db.csv", "data/raw/resevoir")
-#download weir images
-download_images(loc + "weirs_image_db.csv", "data/raw/weir")
+
+import csv
+import requests
+from requests.exceptions import InvalidSchema, ConnectionError
+import logging
+
+logging.basicConfig(filename = 'automatic-asset-classification/web_scrape/web_scrape.log', level = logging.INFO)
+
+types = ["embankment", "flood_gate", "flood_wall", "outfall", "reservoir", "weir"]
+
+for type in types:
+
+    #if type == "embankment":
+    #    continue
+
+    output = "data/raw/" + str(type) + "/"
+
+    with open(loc + str(type) + "_image_db.csv") as csvfile:
+        csvrows = csv.reader(csvfile, delimiter=',', quotechar='"')
+        i = 0
+        for row in csvrows:
+            #filename = row[0]
+            url = row[0]
+            i += 1
+            filename = str(type) + "_" + str(i) + ".jpg"
+            print(url)
+            try:
+                result = requests.get(url, stream=True)
+                if result.status_code == 200:
+                    image = result.raw.read()
+                    open(output + filename,"wb").write(image)
+            except InvalidSchema:
+                print(i, "of ", type, "not worked")
+                logging.exception("InvalidSchema " + str(type) + "row number" + str(i) + "not worked, url: " + url)
+            except ConnectionError:
+                print(i, "of ", type, "connection error")
+                logging.exception("ConnectionError " + str(type) + "row number" + str(i) + "not worked, url: " + url)
