@@ -4,8 +4,7 @@ import csv
 import requests
 from requests.exceptions import InvalidSchema, ConnectionError, Timeout
 import logging
-
-logging.basicConfig(filename = 'automatic-asset-classification/web_scrape/web_scrape.log', level = logging.INFO)
+#logging.basicConfig(filename = 'automatic-asset-classification/web_scrape/web_scrape.log', level = logging.INFO)
 
 types = ["embankment", "flood_gate", "flood_wall", "outfall", "reservoir", "weir"]
 
@@ -26,30 +25,30 @@ for type in types:
             filename = str(type) + "_" + str(i) + ".jpg"
             print(url)
             try:
-                result = requests.get(url, timeout = 20)
+                result = requests.get(url, stream = True, timeout = 20)
                 if result.status_code == 200:
                     image = result.raw.read()
                     open(output + filename,"wb").write(image)
             except InvalidSchema:
                 print(i, "of ", type, "not worked")
-                logging.exception("InvalidSchema " + str(type) + "row number" + str(i) + "not worked, url: " + url)
+                #logging.exception("InvalidSchema " + str(type) + "row number" + str(i) + "not worked, url: " + url)
             except ConnectionError:
                 print(i, "of ", type, "connection error")
-                logging.exception("ConnectionError " + str(type) + "row number" + str(i) + "not worked, url: " + url)
+                #logging.exception("ConnectionError " + str(type) + "row number" + str(i) + "not worked, url: " + url)
             except Timeout:
                 print(i, "of ", type, "timeout error")
-                logging.exception("Timeout " + str(type) + "row number" + str(i) + "not worked, url: " + url)
+                #logging.exception("Timeout " + str(type) + "row number" + str(i) + "not worked, url: " + url)
                 try:
-                    result = requests.get(url, timeout = 20)
+                    result = requests.get(url, timeout = (3,20))
                     if result.status_code == 200:
                         image = result.raw.read()
                         open(output + filename,"wb").write(image)
                 except InvalidSchema:
                     print(i, "of ", type, "second attempt not worked")
-                    logging.exception("InvalidSchema " + str(type) + "row number" + str(i) + "not worked, url: " + url)
+                    #logging.exception("InvalidSchema " + str(type) + "row number" + str(i) + "not worked, url: " + url)
                 except ConnectionError:
                     print(i, "of ", type, "connection error")
-                    logging.exception("ConnectionError " + str(type) + "row number" + str(i) + "second attempt not worked, url: " + url)
+                    #logging.exception("ConnectionError " + str(type) + "row number" + str(i) + "second attempt not worked, url: " + url)
                 except Timeout:
                     print(i, "of ", type, "timeout error")
-                    logging.exception("Timeout " + str(type) + "row number" + str(i) + "timed out twice, url: " + url)
+                    #logging.exception("Timeout " + str(type) + "row number" + str(i) + "timed out twice, url: " + url)

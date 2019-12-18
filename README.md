@@ -56,3 +56,7 @@ This provides you with a database of links to images. This is easier than scrapi
 
 
 checkout fast.ai image classification on my gists!!!
+
+
+https://github.com/moondra2017/Computer-Vision/blob/master/DHASH%20AND%20HAMMING%20DISTANCE_Lesson.ipynb
+this is the help for the duplicate images
