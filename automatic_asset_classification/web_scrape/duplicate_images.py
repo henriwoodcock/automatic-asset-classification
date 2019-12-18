@@ -7,6 +7,7 @@ import os
 import imageio
 from automatic_asset_classification.web_scrape import hashing_functions
 import cv
+import itertools
 
 types = ["embankment", "flood_gate", "flood_wall", "outfall", "reservoir", "weir"]
 
@@ -84,3 +85,6 @@ print(total_num_of_dupes, "found in total from dhashing")
 
 
 #now try hamming distance for similar images:
+for k1,k2 in itertools.combinations(ds_dict, 2):
+    if hamming_distance(ds_dict[k1], ds_dict[k2])< .10:
+        duplicates.append((k1,k2))
