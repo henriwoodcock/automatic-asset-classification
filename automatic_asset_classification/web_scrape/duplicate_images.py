@@ -6,8 +6,9 @@ import numpy as np
 import os
 import imageio
 from automatic_asset_classification.web_scrape import hashing_functions
-import cv
+#import cv
 import itertools
+#from PIL import Image
 
 types = ["embankment", "flood_gate", "flood_wall", "outfall", "reservoir", "weir"]
 
@@ -24,6 +25,8 @@ for type in types:
         #try to open image
         try:
             imageio.imread(loc + "/" + filename)
+            #Image.open(loc + "/" + filename)
+
 
         except ValueError:
             cant_open.append(filename)
@@ -68,6 +71,7 @@ print(total_num_of_dupes, "found in total from simple hashing")
 #now try dhashing for similar images
 total_num_of_dupes = 0
 all_dupes = dict()
+ds_dicts = dict()
 for type in types:
     #go to folder containing images of type
     loc = os.getcwd() + "/data/raw/" + type
@@ -75,16 +79,24 @@ for type in types:
     files_list = [loc + "/" + file for file in files_list]
 
     image_files = hashing_functions.filter_images(files_list)
-    duplicates, ds_dict, hash_ds = hahsing_functions.difference_score_dict_hash(image_files)
+    duplicates, ds_dict, hash_ds = hashing_functions.difference_score_dict_hash(image_files)
     all_dupes[type] = duplicates
 
     total_num_of_dupes += len(duplicates)
     print("There are", len(duplicates), "duplicates in", type)
+    ds_dicts[type] = ds_dict
 
 print(total_num_of_dupes, "found in total from dhashing")
 
 
 #now try hamming distance for similar images:
-for k1,k2 in itertools.combinations(ds_dict, 2):
-    if hamming_distance(ds_dict[k1], ds_dict[k2])< .10:
-        duplicates.append((k1,k2))
+all_dupes = dict()
+total_num_of_dupes = 0
+for type in types:
+    ds_dict = ds_dicts[type]
+    for k1,k2 in itertools.combinations(ds_dict, 2):
+        if hashing_functions.hamming_distance(ds_dict[k1], ds_dict[k2])< .10:
+            duplicates.append((k1,k2))
+    print("There are", len(duplicates), "duplicates in", type)
+    total_num_of_dupes += len(duplicates)
+print(total_num_of_dupes, "duplicates found from hamming distance")

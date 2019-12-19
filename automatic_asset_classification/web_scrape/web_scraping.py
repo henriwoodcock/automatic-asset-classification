@@ -2,16 +2,17 @@ loc = "data/web_scrap_db/"
 
 import csv
 import requests
-from requests.exceptions import InvalidSchema, ConnectionError, Timeout
+from requests.exceptions import InvalidSchema, ConnectionError, Timeout, ReadTimeout
 import logging
+from requests.packages.urllib3.exceptions import ReadTimeoutError
 #logging.basicConfig(filename = 'automatic-asset-classification/web_scrape/web_scrape.log', level = logging.INFO)
 
 types = ["embankment", "flood_gate", "flood_wall", "outfall", "reservoir", "weir"]
 
 for type in types:
 
-    #if type == "embankment" or type == "flood_wall" or type == "outfall" or type == "flood_gate" or type == "reservior":
-    #    continue
+    if type == "embankment" or type == "flood_wall" or type == "outfall" or type == "flood_gate":# or type == "reservior":
+        continue
 
     output = "data/raw/" + str(type) + "/"
 
@@ -25,7 +26,7 @@ for type in types:
             filename = str(type) + "_" + str(i) + ".jpg"
             print(url)
             try:
-                result = requests.get(url, stream = True, timeout = 20)
+                result = requests.get(url, stream = True, timeout = 120)
                 if result.status_code == 200:
                     image = result.raw.read()
                     open(output + filename,"wb").write(image)
@@ -39,7 +40,7 @@ for type in types:
                 print(i, "of ", type, "timeout error")
                 #logging.exception("Timeout " + str(type) + "row number" + str(i) + "not worked, url: " + url)
                 try:
-                    result = requests.get(url, timeout = (3,20))
+                    result = requests.get(url, stream = True, timeout = 120)
                     if result.status_code == 200:
                         image = result.raw.read()
                         open(output + filename,"wb").write(image)
@@ -52,3 +53,10 @@ for type in types:
                 except Timeout:
                     print(i, "of ", type, "timeout error")
                     #logging.exception("Timeout " + str(type) + "row number" + str(i) + "timed out twice, url: " + url)
+                    continue
+                except ReadTimeout:
+                    print(i, "of ", type, "timeout error")
+                    continue
+                except ReadTimeoutError:
+                    print(i, "of ", type, "timeout error")
+                    continue

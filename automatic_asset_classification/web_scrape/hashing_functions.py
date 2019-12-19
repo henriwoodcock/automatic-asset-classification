@@ -3,6 +3,9 @@ from hashlib import md5
 import imageio
 import numpy as np
 import scipy
+import os
+import cv2
+
 
 def file_hash(filepath):
     with open(filepath, 'rb') as f:
@@ -15,10 +18,15 @@ def filter_images(images):
     image_list = []
     for image in images:
         try:
-            assert imageio.imread(image).shape[2] == 3
+            assert imageio.imread(image).shape[2] == 3 or imageio.imread(image).shape[2] == 4
             image_list.append(image)
         except AssertionError:
             print(image, "does not contain 3channels")
+        except ValueError:
+            print(image)
+        except IndexError:
+            print(image, "has one channel")
+            os.remove(image)
 
     return image_list
 
@@ -27,6 +35,9 @@ def img_gray(image):
     this function turns an image into a gray image
     '''
     image = imageio.imread(image)
+    if image.shape[2] == 4:
+        image = image[:,:,:3]
+
     return np.average(image, weights=[0.299, 0.587, 0.114], axis=2)
 
 def resize(image, height=30, width=30):
