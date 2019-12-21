@@ -3,6 +3,7 @@ image_path = os.getcwd() + "/data/processing/embankment/"
 
 data = ImageDataBunch.from_folder(image_path, valid_pct = 0.2, size=224,ds_tfms=get_transforms()).normalize(imagenet_stats)
 
+#resnet 50?
 learn = cnn_learner(data, models.resnet34, metrics=error_rate)
 learn.fit_one_cycle(4)
 
