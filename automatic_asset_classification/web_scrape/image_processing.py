@@ -12,7 +12,7 @@ for type_ in types:
     data = ImageDataBunch.from_folder(image_path, valid_pct = 0.2, size=224,ds_tfms=get_transforms()).normalize(imagenet_stats)
     #create learner
     #resnet 50?
-    learn = cnn_learner(data, models.resnet34, metrics=error_rate)
+    learn = cnn_learner(data, models.resnet50, metrics=error_rate)
     #fit on just end layer (other layers are froze)
     learn.fit_one_cycle(4)
     #interprate class
@@ -26,3 +26,11 @@ for type_ in types:
     learner_dict[type_] = learner
 #print plots of validagtion analysis
 plt.show()
+
+for type_ in types:
+    #to delete file rm from folder
+    path_ = os.getcwd() + "/" + type_
+    if learner.predict(type_) == 1:
+        type_ = (os.cwd() = os.cwd() + "/" + "no/"
+    if leaner.predict(type_) == 0:
+        type_ = (os.cwd() = os.cwd() + "/" + "yes/"
