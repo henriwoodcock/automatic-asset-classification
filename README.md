@@ -60,3 +60,6 @@ checkout fast.ai image classification on my gists!!!
 
 https://github.com/moondra2017/Computer-Vision/blob/master/DHASH%20AND%20HAMMING%20DISTANCE_Lesson.ipynb
 this is the help for the duplicate images
+
+
+Have a look at Bayesian deep learning it could tell hardest assets to classify.......
