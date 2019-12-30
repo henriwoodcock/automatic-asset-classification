@@ -53,7 +53,12 @@ window.open('data:text/csv;charset=utf-8,' + escape(urls.join('\n')));
 
 This provides you with a database of links to images. This is easier than scraping for the links then downloading the images from the links. However feel free to scrape for the links if not using google images for your data.
 
+From trying to classify them into correct or incorrect, the hardest one was the flood gate. A lot of the images online are from a brand called flood gate which makes it hard to find proper flood gates. This model managed to predict wrong 50% of the time as the model never predicted no. This could result in a lower quality of dataset for the final model. Rerunning this managed an accuracy of 75% however it is unsure how accurate this will be on the final dataset as the images are hard to classify even for human.
 
+flood wall 10 could be a flood wall however when comparing to embankment it would be an embankment, so this one cannot be used in the final dataset. _However could be used in the later autoencoding section._
+
+test:
+*hfhsh and  then __this__*
 
 checkout fast.ai image classification on my gists!!!
 

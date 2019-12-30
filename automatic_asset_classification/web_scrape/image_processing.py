@@ -1,45 +1,13 @@
 from fastai.vision import *
 import matplotlib.pyplot as plt
 import os
+import pandas as pd
 
 types = ["embankment", "flood_gate", "flood_wall", "outfall", "reservoir", "weir"]
 
+test_path = os.getcwd() + "/data/raw/"
+out_path = os.getcwd() + "/data/processing/"
 learner_dict = dict()
-
-for type_ in types:
-    #get location
-    image_path = os.getcwd() + "/data/processing/" + type_ + "/"
-    #create fastai data bunch for pre processing
-    data = ImageDataBunch.from_folder(image_path, valid_pct = 0.2, size=224,ds_tfms=get_transforms(), test = "test").normalize(imagenet_stats)
-    #create learner
-    #resnet 50?
-    learn = cnn_learner(data, models.resnet34, metrics=error_rate)
-    #fit on just end layer (other layers are froze)
-    learn.fit_one_cycle(4)
-    #interprate class
-    interp = ClassificationInterpretation.from_learner(learn)
-    losses,idxs = interp.top_losses()
-    len(data.valid_ds)==len(losses)==len(idxs)
-    #validation analysis
-    interp.plot_top_losses(9, figsize=(15,11))
-    interp.plot_confusion_matrix(figsize=(12,12), dpi=60)
-    #add learner to dictionary so can be used for prediction later
-    learner_dict[type_] = learn
-#print plots of validagtion analysis
-plt.show()
-
-for type_ in types:
-    #to delete file rm from folder
-    path_ = os.getcwd() + "/" + type_
-    #if file not right then put in no
-    if learner.predict(type_) == 1:
-        type_ = (os.cwd() = os.cwd() + "/" + "no/"
-    #if file right then add to yes
-    if leaner.predict(type_) == 0:
-        type_ = (os.cwd() = os.cwd() + "/" + "yes/"
-
-#doing them on by one:
-data = ImageList.from_folder(loc).normalize(imagenet_stats)
 
 #create a function:
 def create_yes_no_model(type_):
@@ -48,55 +16,154 @@ def create_yes_no_model(type_):
     data = ImageDataBunch.from_folder(image_path, valid_pct = 0.2, size=224,ds_tfms=get_transforms(), test = "test").normalize(imagenet_stats)
     #create learner
     #resnet 50?
-    learn = cnn_learner(data, models.resnet50, metrics=error_rate)
-    #fit on just end layer (other layers are froze)
-    learn.fit_one_cycle(4)
+    learn = cnn_learner(data, models.resnet34, metrics=error_rate)
+    #fit on just end layers (other layers are froze)
+    learn.fit_one_cycle(5)
+    return learn
+
+def plot_val(learn):
     #interprate class
     interp = ClassificationInterpretation.from_learner(learn)
     losses,idxs = interp.top_losses()
-    len(data.valid_ds)==len(losses)==len(idxs)
+    #len(data.valid_ds)==len(losses)==len(idxs)
     #validation analysis
     interp.plot_top_losses(9, figsize=(15,11))
     interp.plot_confusion_matrix(figsize=(12,12), dpi=60)
     plt.show()
-    return learn
 
+def return_classes(zeros, ones, pred):
+    if pred == 0:
+        return zeros
+    else:
+        return ones
 
-
+#embankment
 type_ = "embankment"
-#embank_leanr = create_yes_no_model(type_)
-
-image_path = os.getcwd() + "/data/processing/" + type_ + "/"
-#create fastai data bunch for pre processing
-data = ImageDataBunch.from_folder(image_path, valid_pct = 0.2, size=224,ds_tfms=get_transforms(), test = "test").normalize(imagenet_stats)
-#create learner
-#resnet 50?
-learn = cnn_learner(data, models.resnet34, metrics=error_rate)
-#fit on just end layer (other layers are froze)
-learn.fit_one_cycle(4)
-#interprate class
-interp = ClassificationInterpretation.from_learner(learn)
-losses,idxs = interp.top_losses()
-len(data.valid_ds)==len(losses)==len(idxs)
-#validation analysis
-interp.plot_top_losses(9, figsize=(15,11))
-interp.plot_confusion_matrix(figsize=(12,12), dpi=60)
-plt.show()
-
-
-preds,y = embank_leanr.get_preds(ds_type=DatasetType.Test)
-
-data.test_dl.dl.dataset.x.items
-
-img = embank_leanr.data.train_ds[0][0]
+embank_learn = create_yes_no_model(type_)
+#check accuracy on validation set:
+plot_val(embank_learn)
+img = embank_learn.data.train_ds[0][0]
 img.show()
-#predictions
-path2 = os.getcwd() + "/data/raw/" + type_ + "/"
-data.add_test_folder(path2)
-data2 = ImageDataBunch.from_folder(path2, valid_pct = 0.2, size=224,ds_tfms=get_transforms()).normalize(imagenet_stats)
+plt.show()
+embank_learn.data.classes
+#category "no" = 0
+#just to check:
+embank_learn.predict(img)
+#now predict test set.
+preds,y = embank_learn.get_preds(ds_type=DatasetType.Test)
+pred_out = np.argmax(preds, axis = 1).numpy()
+#convert to classes
+pred_class = [return_classes("no", "yes", pred) for pred in pred_out]
+#grab file names
+labels = embank_learn.data.test_dl.dl.dataset.x.items
+#output
+df = pd.DataFrame({"Filename": labels, "Correct": pred_class})
+df.to_csv(out_path + str(type_) + "folder_pred.csv", index = False)
 
-learn.data.test_dl.dl.dataset.x.items
-predictions = []
-for i in range(len(data.test_ds.x)):
-    img = embank_leanr.data.train_ds[i][0]
-    predictions.append(learn.predict(img)[0])
+#flood_gate
+type_ = "flood_gate"
+gate_learn = create_yes_no_model(type_)
+#check accuracy on validation set:
+plot_val(gate_learn)
+img = gate_learn.data.train_ds[0][0]
+img.show()
+plt.show()
+gate_learn.data.classes
+#category "no" = 0
+#just to check:
+gate_learn.predict(img)
+#now predict test set.
+preds,y = gate_learn.get_preds(ds_type=DatasetType.Test)
+pred_out = np.argmax(preds, axis = 1).numpy()
+#convert to classes
+pred_class = [return_classes("no", "yes", pred) for pred in pred_out]
+#grab file names
+labels = gate_learn.data.test_dl.dl.dataset.x.items
+#output
+df = pd.DataFrame({"Filename": labels, "Correct": pred_class})
+df.to_csv(out_path + str(type_) + "folder_pred.csv", index = False)
+gate_learn.save(out_path + str(type_) + "_learner")
+
+#flood wall
+type_ = "flood_wall"
+wall_learn = create_yes_no_model(type_)
+#check accuracy on validation set:
+plot_val(wall_learn)
+wall_learn.data.classes
+#category "no" = 0
+#just to check:
+wall_learn.predict(img)
+#now predict test set.
+preds,y = wall_learn.get_preds(ds_type=DatasetType.Test)
+pred_out = np.argmax(preds, axis = 1).numpy()
+#convert to classes
+pred_class = [return_classes("no", "yes", pred) for pred in pred_out]
+#grab file names
+labels = wwall_learn.data.test_dl.dl.dataset.x.items
+#output
+df = pd.DataFrame({"Filename": labels, "Correct": pred_class})
+df.to_csv(out_path + str(type_) + "folder_pred.csv", index = False)
+wall_learn.save(out_path + str(type_) + "_learner")
+
+#outfall
+type_ = "outfall"
+outfall_learn = create_yes_no_model(type_)
+#check accuracy on validation set:
+plot_val(outfall_learn)
+outfall_learn.data.classes
+#category "no" = 0
+#just to check:
+outfall_learn.predict(img)
+#now predict test set.
+preds,y = outfall_learn.get_preds(ds_type=DatasetType.Test)
+pred_out = np.argmax(preds, axis = 1).numpy()
+#convert to classes
+pred_class = [return_classes("no", "yes", pred) for pred in pred_out]
+#grab file names
+labels = outfall_learn.data.test_dl.dl.dataset.x.items
+#output
+df = pd.DataFrame({"Filename": labels, "Correct": pred_class})
+df.to_csv(out_path + str(type_) + "folder_pred.csv", index = False)
+outfall_learn.save(out_path + str(type_) + "_learner")
+
+#reservoir
+type_ = "reservoir"
+reservoir_learn = create_yes_no_model(type_)
+#check accuracy on validation set:
+plot_val(reservoir_learn)
+reservoir_learn.data.classes
+#category "no" = 0
+#just to check:
+reservoir_learn.predict(img)
+#now predict test set.
+preds,y = reservoir_learn.get_preds(ds_type=DatasetType.Test)
+pred_out = np.argmax(preds, axis = 1).numpy()
+#convert to classes
+pred_class = [return_classes("no", "yes", pred) for pred in pred_out]
+#grab file names
+labels = reservoir_learn.data.test_dl.dl.dataset.x.items
+#output
+df = pd.DataFrame({"Filename": labels, "Correct": pred_class})
+df.to_csv(out_path + str(type_) + "folder_pred.csv", index = False)
+reservoir_learn.save(out_path + str(type_) + "_learner")
+
+#weir
+type_ = "weir"
+weir_learn = create_yes_no_model(type_)
+#check accuracy on validation set:
+plot_val(weir_learn)
+weir_learn.data.classes
+#category "no" = 0
+#just to check:
+weir_learn.predict(img)
+#now predict test set.
+preds,y = weir_learn.get_preds(ds_type=DatasetType.Test)
+pred_out = np.argmax(preds, axis = 1).numpy()
+#convert to classes
+pred_class = [return_classes("no", "yes", pred) for pred in pred_out]
+#grab file names
+labels = weir_learn.data.test_dl.dl.dataset.x.items
+#output
+df = pd.DataFrame({"Filename": labels, "Correct": pred_class})
+df.to_csv(out_path + str(type_) + "folder_pred.csv", index = False)
+weir_learn.save(out_path + str(type_) + "_learner")
