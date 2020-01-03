@@ -1,5 +1,5 @@
 from fastai.vision import *
-from fastai.widgets.image_cleaner import *
+#from fastai.widgets.image_cleaner import *
 import matplotlib.pyplot as plt
 import os
 import pandas as pd
