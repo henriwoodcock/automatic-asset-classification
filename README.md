@@ -57,6 +57,12 @@ From trying to classify them into correct or incorrect, the hardest one was the 
 
 flood wall 10 could be a flood wall however when comparing to embankment it would be an embankment, so this one cannot be used in the final dataset. _However could be used in the later autoencoding section._
 
+### Data Clean Up
+A resnet34 model was then used on a basic classificiation model to further clean up the data. This involved create a resnet34 model on the "final" dataset and then plotting the top losses. This should help find images which are not clean / not clear what they are of. A few examples can be seen below. For example a weir can form over a floodwall or a image could be of a reservoir with a outfall in it. Removing these can help create a more accurate model, as if an image has multiple assets in it then this will become confusing for the model.
+
+# Goals
+Asset classification without labelling. This will be done with an auto-encoder. This could lead to a future development where AI can help put assets into categories in which humans may struggle with defining said categories. This is a basic example with some very differing examples, but the hope is that it could be used in the future on more confusing assets. For example some assets may be a flood wall made out of sheets however it has been upgraded but the sheet pile is still there. An AI could help make a conclusion as to how to classify this.
+
 test:
 *hfhsh and  then __this__*
 
