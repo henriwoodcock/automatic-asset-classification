@@ -63,6 +63,8 @@ A resnet34 model was then used on a basic classificiation model to further clean
 # Goals
 Asset classification without labelling. This will be done with an auto-encoder. This could lead to a future development where AI can help put assets into categories in which humans may struggle with defining said categories. This is a basic example with some very differing examples, but the hope is that it could be used in the future on more confusing assets. For example some assets may be a flood wall made out of sheets however it has been upgraded but the sheet pile is still there. An AI could help make a conclusion as to how to classify this.
 
+A lot of images in asset management are also labelled to just include a location of where the image was taken but not include the type of asset this is, this would then mean that a human would have to go through these images to classify them. Creating a basic classifier model could help speed this up.
+
 test:
 *hfhsh and  then __this__*
 
