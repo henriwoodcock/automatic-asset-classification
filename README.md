@@ -78,3 +78,10 @@ this is the help for the duplicate images
 Have a look at Bayesian deep learning it could tell hardest assets to classify.......
 
 imagecleaner to help clean up top losses.
+
+
+## Research
+transfer learning:
+https://medium.com/pytorch/active-transfer-learning-with-pytorch-71ed889f08c1
+self-supervised learning and computer vision:
+https://www.fast.ai/2020/01/13/self_supervised/ - maybe attempt a few of these see which is best for pretraining.
