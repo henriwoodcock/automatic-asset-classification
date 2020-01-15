@@ -85,3 +85,9 @@ transfer learning:
 https://medium.com/pytorch/active-transfer-learning-with-pytorch-71ed889f08c1
 self-supervised learning and computer vision:
 https://www.fast.ai/2020/01/13/self_supervised/ - maybe attempt a few of these see which is best for pretraining.
+
+https://www.biorxiv.org/content/10.1101/740548v4 - pretraining
+https://chemrxiv.org/articles/Inductive_Transfer_Learning_for_Molecular_Activity_Prediction_Next-Gen_QSAR_Models_with_MolPMoFiT/9978743/1
+https://github.com/kheyer/Genomic-ULMFiT
+https://www.youtube.com/playlist?list=PLoRl3Ht4JOcdU872GhiYWf6jwrk_SNhz9
+
