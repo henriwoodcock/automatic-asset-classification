@@ -91,3 +91,10 @@ https://chemrxiv.org/articles/Inductive_Transfer_Learning_for_Molecular_Activity
 https://github.com/kheyer/Genomic-ULMFiT
 https://www.youtube.com/playlist?list=PLoRl3Ht4JOcdU872GhiYWf6jwrk_SNhz9
 
+
+
+IDEAS for post (temporary on here):
+- explainable AI: first look at weightings for singular layer AI:
+  https://stats.stackexchange.com/questions/261008/deep-learning-how-do-i-know-which-variables-are-important
+  https://beckmw.wordpress.com/2013/08/12/variable-importance-in-neural-networks/
+  https://towardsdatascience.com/feature-importance-with-neural-network-346eb6205743
