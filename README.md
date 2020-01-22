@@ -91,6 +91,12 @@ https://chemrxiv.org/articles/Inductive_Transfer_Learning_for_Molecular_Activity
 https://github.com/kheyer/Genomic-ULMFiT
 https://www.youtube.com/playlist?list=PLoRl3Ht4JOcdU872GhiYWf6jwrk_SNhz9
 
+### the problem (autoencoders etc):
+- https://medium.com/@s.ganjoo96/autoencoders-with-pytorch-a89ed28f94a9
+- https://www.researchgate.net/profile/Gobert_Lee/publication/4309506_K-means_Clustering_for_Classifying_Unlabelled_MRI_Data/links/0fcfd511b09aa8daa4000000.pdf?origin=publication_detail
+- https://www.cc.gatech.edu/~jyang375/Jianwei_Yang_files/Unsupervised_Learning_JianweiYang.pdf
+https://www.paperswithcode.com/task/image-clustering
+
 
 
 IDEAS for post (temporary on here):
