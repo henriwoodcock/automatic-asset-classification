@@ -10,7 +10,7 @@ image_loc = "data/final_dataset/final/"
 folder_names = ["embankment", "flood_gate", "flood_wall", "outfall",
                 "reservoir", "weir"]
 
-size = 224
+size = 28
 batchsize = 32
 tfms = get_transforms(do_flip = False)
 src = (ImageImageList.from_folder(image_loc).split_by_rand_pct(seed=2).label_from_func(lambda x: x))
@@ -48,7 +48,7 @@ class AutoEncoder(nn.Module):
         decoded = self.decoder(encoded)
         return encoded, decoded
 
-
 autoencoder = AutoEncoder();
+print(autoencoder);
+
 learn = Learner(data, autoencoder);
-learn.fit_one_cycle(1)
