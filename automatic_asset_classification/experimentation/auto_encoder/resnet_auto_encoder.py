@@ -1,3 +1,6 @@
+from torchsummary import summary
+import torch
+from torch import nn
 #from fast ai
 class AdaptiveConcatPool2d(Module):
     "Layer that concats `AdaptiveAvgPool2d` and `AdaptiveMaxPool2d`."
@@ -8,7 +11,6 @@ class AdaptiveConcatPool2d(Module):
         self.mp = nn.AdaptiveMaxPool2d(self.output_size)
 
     def forward(self, x): return torch.cat([self.mp(x), self.ap(x)], 1)
-
 
 class AutoEncoder(nn.Module):
     def __init__(self):
@@ -34,7 +36,7 @@ class AutoEncoder(nn.Module):
         )
 
         self.encoder = nn.Sequential(feature_extract, ConcatPool2D, bottleneck)
-
+'''
         self.decoder = nn.Sequential(
             nn.Linear(in_features = 3, out_features = 16, bias = True),
             nn.ReLU(inplace = True),
@@ -49,16 +51,77 @@ class AutoEncoder(nn.Module):
             nn.Linear(in_features = 448, out_features = 64, bias = True),
             nn.ConvTranspose2d(64, 3, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
         )
-
+'''
         #self.model = nn.Sequential(feature_extract, encoder)
     def forward(self, x):
         #extracted = self.feature_extract(x)
         #encoded = self.encoder(extracted)
 #        decoded = self.decoder(encoded)
         encoded = self.encoder(x)
+        #decoded = self.decoder(encoded)
+
+        return encoded#, decoded
+
+
+#===================
+class AutoEncoder(nn.Module):
+    def __init__(self):
+        super(AutoEncoder, self).__init__()
+
+        resnet = torch.hub.load('pytorch/vision:v0.5.0', 'resnet34', pretrained = True)
+        resnet = nn.Sequential(*(list(resnet.children())[:-2]))
+        for param in resnet.parameters():
+            param.requires_grad = False
+
+        feature_extract = resnet
+
+        ConcatPool2D = AdaptiveConcatPool2d()
+        bottleneck = nn.Sequential(
+        nn.Flatten(),
+        nn.BatchNorm1d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+        nn.Dropout(p=0.25, inplace=False),
+        nn.Linear(in_features=1024, out_features=512, bias=True),
+        nn.ReLU(inplace=True),
+        nn.BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+        nn.Dropout(p=0.5, inplace=False),
+        #nn.Linear(in_features=512, out_features=3, bias=True),
+        nn.Linear(in_features=512, out_features=3, bias=True)
+        )
+
+        self.encoder = nn.Sequential(
+        feature_extract,
+        ConcatPool2D,
+        bottleneck)
+
+        self.decoder = nn.Sequential(
+            nn.Linear(in_features = 3, out_features = 512, bias = True),
+            nn.ReLU(inplace = True),
+            nn.Linear(in_features = 512, out_features = 1024, bias = True),
+            #nn.Upsample(scale_factor=2, mode='nearest'),
+            nn.ReLU(inplace = True)
+            #nn.ConvTranspose2d(16, 128, kernel_size=8, stride=4),
+            #nn.ReLU(inplace = True),
+            #nn.ConvTranspose2d(128, 256, kernel_size=8, stride=4),
+            #nn.ReLU(inplace = True),
+            #nn.ConvTranspose2d(256, 1024, kernel_size=4, stride=1),
+            #out features to twice the size of final image
+            #nn.Linear(in_features = 1024, out_features = 448, bias = True),
+            #nn.ReLU(inplace = True),
+            #nn.Linear(in_features = 448, out_features = 64, bias = True),
+            #nn.ConvTranspose2d(64, 3, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+        )
+
+    def forward(self, x):
+        #extracted = self.feature_extract(x)
+        #encoded = self.encoder(extracted)
+        #decoded = self.decoder(encoded)
+        encoded = self.encoder(x)
         decoded = self.decoder(encoded)
 
         return encoded, decoded
 
+
+
 autoencoder = AutoEncoder();
 #learn = Learner(data, autoencoder);
+summary(autoencoder, (3,224,224))
