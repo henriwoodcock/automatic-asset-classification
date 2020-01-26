@@ -15,14 +15,26 @@ class AutoEncoder(nn.Module):
         super(AutoEncoder, self).__init__()
 
         resnet = torch.hub.load('pytorch/vision:v0.5.0', 'resnet34', pretrained = True)
-        resnet = torch.nn.Sequential(*(list(resnet.children())[:-2]))
+        resnet = nn.Sequential(*(list(resnet.children())[:-2]))
         for param in resnet.parameters():
             param.requires_grad = False
 
         feature_extract = resnet
 
-        encoder = AdaptiveConcatPool2d()
-        '''
+        ConcatPool2D = AdaptiveConcatPool2d()
+        bottleneck = nn.Sequential(nn.Flatten(),
+        nn.BatchNorm1d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+        nn.Dropout(p=0.25, inplace=False),
+        nn.Linear(in_features=1024, out_features=512, bias=True),
+        nn.ReLU(inplace=True),
+        nn.BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+        nn.Dropout(p=0.5, inplace=False),
+        #nn.Linear(in_features=512, out_features=3, bias=True),
+        nn.Linear(in_features=512, out_features=224, bias=True)
+        )
+
+        self.encoder = nn.Sequential(feature_extract, ConcatPool2D, bottleneck)
+
         self.decoder = nn.Sequential(
             nn.Linear(in_features = 3, out_features = 16, bias = True),
             nn.ReLU(inplace = True),
@@ -30,28 +42,23 @@ class AutoEncoder(nn.Module):
             nn.ReLU(inplace = True),
             nn.ConvTranspose2d(128, 256, kernel_size=8, stride=4),
             nn.ReLU(inplace = True),
-            nn.ConvTranspose2d(256, 512, kernel_size=2, stride=1),
-            nn.Linear(in_features = 512, out_features = 224, bias = True),
-        )'''
-
-        self.model = nn.Sequential(feature_extract, encoder,
-                                    nn.Flatten(),
-                    nn.BatchNorm1d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
-                    nn.Dropout(p=0.25, inplace=False),
-                    nn.Linear(in_features=1024, out_features=512, bias=True),
-                    nn.ReLU(inplace=True),
-                    nn.BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
-                    nn.Dropout(p=0.5, inplace=False),
-                    #nn.Linear(in_features=512, out_features=3, bias=True),
-                    nn.Linear(in_features=512, out_features=224, bias=True),
+            nn.ConvTranspose2d(256, 1024, kernel_size=4, stride=1),
+            #out features to twice the size of final image
+            nn.Linear(in_features = 1024, out_features = 448, bias = True),
+            nn.ReLU(inplace = True),
+            nn.Linear(in_features = 448, out_features = 64, bias = True),
+            nn.ConvTranspose2d(64, 3, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
         )
+
+        #self.model = nn.Sequential(feature_extract, encoder)
     def forward(self, x):
         #extracted = self.feature_extract(x)
         #encoded = self.encoder(extracted)
 #        decoded = self.decoder(encoded)
-        encoded = self.model(x)
+        encoded = self.encoder(x)
+        decoded = self.decoder(encoded)
 
-        return encoded#, decoded
+        return encoded, decoded
 
 autoencoder = AutoEncoder();
-learn = Learner(data, autoencoder);
+#learn = Learner(data, autoencoder);
