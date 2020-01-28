@@ -104,3 +104,7 @@ IDEAS for post (temporary on here):
   https://stats.stackexchange.com/questions/261008/deep-learning-how-do-i-know-which-variables-are-important
   https://beckmw.wordpress.com/2013/08/12/variable-importance-in-neural-networks/
   https://towardsdatascience.com/feature-importance-with-neural-network-346eb6205743
+
+
+deconvolution idea
+https://distill.pub/2016/deconv-checkerboard/
