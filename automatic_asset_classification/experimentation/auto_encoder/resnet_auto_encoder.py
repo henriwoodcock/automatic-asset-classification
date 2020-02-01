@@ -65,7 +65,7 @@ class AutoEncoder(nn.Module):
         self.decoder = nn.Sequential(
             nn.Linear(in_features = 3, out_features = 512, bias = True),
             nn.ReLU(inplace = True),
-            nn.Linear(in_features = 512, out_features = 1024, bias = True),
+            nn.Linear(in_features = 512, out_features = 2048, bias = True),
             #nn.Upsample(scale_factor=2, mode='nearest'),
             nn.ReLU(inplace = True)
             #nn.ConvTranspose2d(16, 128, kernel_size=8, stride=4),
@@ -126,4 +126,4 @@ class AutoEncoder(nn.Module):
 autoencoder = AutoEncoder();
 #learn = Learner(data, autoencoder);
 summary(autoencoder, (3,224,224))
-learn = Learner(data, autoencoder);
+learn = Learner(data, autoencoder, loss_func=F.mse_loss);
