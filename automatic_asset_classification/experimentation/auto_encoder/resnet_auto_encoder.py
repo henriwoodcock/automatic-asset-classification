@@ -17,9 +17,12 @@ size = 224
 batchsize = 32
 tfms = get_transforms(do_flip = False)
 src = (ImageImageList.from_folder(image_loc).split_by_rand_pct(seed=2).label_from_func(lambda x: x))
-data = (src.transform(get_transforms(), size=size, tfm_y=True)
+data = (src.transform(size=size, tfm_y=True)
         .databunch(bs=batchsize)
-        .normalize(imagenet_stats, do_y = False))
+        .normalize(imagenet_stats)#, do_y = False))
+#data = (src.transform(get_transforms(), size=size, tfm_y=True)
+#        .databunch(bs=batchsize)
+#        .normalize(imagenet_stats, do_y = False))
 
 #from fast ai
 class AdaptiveConcatPool2d(Module):
