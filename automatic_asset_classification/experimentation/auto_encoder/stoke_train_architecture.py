@@ -93,3 +93,4 @@ class AutoEncoder(nn.Module):
 autoencoder = AutoEncoder();
 #learn = Learner(data, autoencoder);
 summary(autoencoder, (3,224,224))
+learn = Learner(data, autoencoder, loss_func=F.mse_loss);
