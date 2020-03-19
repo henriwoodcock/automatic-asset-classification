@@ -108,3 +108,15 @@ IDEAS for post (temporary on here):
 
 deconvolution idea
 https://distill.pub/2016/deconv-checkerboard/
+
+
+
+Two Ideas:
+
+- __Labelled data__ you can measure the clusters and the loss from different sizes clusters, perhaps try minimise these clusters to create a low dimension representation of images
+
+- __Unlabelled data__ find new ways to categorise data
+
+- Architecture(s): Encoder - Decoder. Encoder - Classifier / Cluster - Decoder.
+
+- How to decide on number of clusters? or will this be visual?
