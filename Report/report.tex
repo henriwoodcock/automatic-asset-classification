@@ -74,6 +74,10 @@ An autoencoder is a special type of neural network. It is trained to recreate it
 
 In the situation here it is not as important to recreate the image perfectly as it is for the autoencoder to recreate important aspects and features of the image such as hints at the location, material and shape of the actual assets and not just a recreation of the image. Recreating an image does not teach us much more other than that images can be decompressed.
 
+\subsection{Multiple Algorithms}
+\label{ss:ma}
+It is common to use multiple algorithms. An autoencoder is a vary large network especially for images. High quality images are commonly 4k now which even on the first layer of an auto-encoder would give a huge amount of parameters. Sometimes images are first preprocessed to reduce the size or more commonly used to reduce the images and then a statistical analysis such as principal component analysis is applied.
+
 \section{Model}
 
 \section{Headings: first level}
