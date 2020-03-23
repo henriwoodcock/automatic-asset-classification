@@ -68,6 +68,12 @@ Convolution neural networks are a very popular type of neural network in image r
 
 One benefit of doing this in an unsupervised way is that the model could relate assets based different attributes than humans would. For example humans classify flood assets purely based on what they do which could be a biased approach. Two assets may not perform similar at all however they are depreciated similarly due to the role they play. An unsupervised neural network will hopefully uncover hidden attributes which are better at relating assets. An example could be the different materials used or the location they are placed in.
 
+\subsection{Auto-Encoder}
+\label{ss:ae}
+An autoencoder is a special type of neural network. It is trained to recreate itself after applying a bottleneck. The bottleneck here is a encoder, which essentially compresses the image into a smaller dimension. This encoded data is then passed into a decoder which attempts to decompress the data back into the original image. Auto-encoders can hopefully find hidden relationships in images and store this imformation into lower dimensions.
+
+In the situation here it is not as important to recreate the image perfectly as it is for the autoencoder to recreate important aspects and features of the image such as hints at the location, material and shape of the actual assets and not just a recreation of the image. Recreating an image does not teach us much more other than that images can be decompressed.
+
 \section{Model}
 
 \section{Headings: first level}
