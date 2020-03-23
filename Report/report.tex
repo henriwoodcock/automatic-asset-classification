@@ -54,7 +54,21 @@
 
 
 \section{Introduction}
-Asset management is becoming recognised as an increasingly more important part of business in all industry, not just engineering. However even though recognition is increasing there is still little research into utilising modern machine and deep learning methods to automate and optimise the methods in this discipline. This paper introduces a method to automate the classification of assets through the use of neural networks, doing this could allow us to find new classifications of assets in which would have never been thought of before. Exploring these new classifications could lead to new developments into managing said assets and possibly improving performance in strategic asset management.
+Asset management is becoming recognised as an increasingly more important part of business in all industry, not just engineering. However even though recognition is increasing there is still little research into utilising modern machine and deep learning methods to automate and optimise the methods in this discipline. This paper introduces a method to automate the classification of assets through the use of neural networks, doing this could allow us to automate the classification of assets through images from already standardised asset classes but also to find new classifications of assets in which would have never been thought of before. Exploring these new classifications could lead to new developments into managing assets and possibly improving performance in strategic asset management.
+
+\section{Techniques}
+\label{sec: techniques}
+Most common methods for classification involve trying to separate points in a space. In this scenario in image classification you want to find a way to separate images in the image space. This is commonly done by rating images on similarity.
+
+For example the k-nearest neighbours method works by classifying images based on the k-nearest image. Without any preprocessing this is done purely on pixel values.
+
+If two images are visually similar (ie they have similar pixel values) they are classified as the same. One issue with this is it requires all images to have the object that is being classified in similar positions on the image and to be similar in appearance, of course this does not represent intelligence very much as humans are able to classify objects despite their appearance in the image.
+
+Convolution neural networks are a very popular type of neural network in image recognition. These networks look into the local area surrounding images not just the entire image. This gives a greater ability to the model as it is able to recognise individual objects no matter the overall context of the model. To recognise different shaped objects which are classed as the same more training examples are required.
+
+One benefit of doing this in an unsupervised way is that the model could relate assets based different attributes than humans would. For example humans classify flood assets purely based on what they do which could be a biased approach. Two assets may not perform similar at all however they are depreciated similarly due to the role they play. An unsupervised neural network will hopefully uncover hidden attributes which are better at relating assets. An example could be the different materials used or the location they are placed in.
+
+\section{Model}
 
 \section{Headings: first level}
 \label{sec:headings}
