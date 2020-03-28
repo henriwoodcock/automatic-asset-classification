@@ -26,6 +26,10 @@
 - Spun Iron
 
 
+------------
+Look at getting a simple flattened auto-encoder to work with k-means or something.
+
+
 ## Datasets
 
 - autstialian trunk main dataset:
