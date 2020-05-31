@@ -25,6 +25,9 @@
 - Steel
 - Spun Iron
 
+### Further:
+- Look at Image space.
+
 
 ------------
 Look at getting a simple flattened auto-encoder to work with k-means or something.
