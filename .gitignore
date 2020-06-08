@@ -9,3 +9,10 @@ research/
 !images/ResnetAE_all_per.png
 
 !images/resnet_autoencoder_class5.png
+
+data/web_scrap_db/embankment_image_db.csv
+data/web_scrap_db/flood_gate_image_db.csv
+data/web_scrap_db/flood_wall_image_db.csv
+data/web_scrap_db/outfall_image_db.csv
+data/web_scrap_db/reservoir_image_db.csv
+data/web_scrap_db/weir_image_db.csv
