@@ -13,7 +13,6 @@ This readme has a basic overview of the project and results. A full report can b
 - [Experiment and Notebooks](#experiment-and-Notebooks)
   - [Models](#models)
 - [Conclusion](#conclusion)
-- [References](#references)
 
 
 ## Introduction
