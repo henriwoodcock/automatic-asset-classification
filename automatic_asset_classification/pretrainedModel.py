@@ -4,10 +4,10 @@ from torch import nn
 
 
 class encoder(nn.Module):
-    def __init__(self, model_weights):
+    def __init__(self):
         super(encoder, self).__init__()
 
-        resnet = torch.hub.load('pytorch/vision:v0.5.0', 'resnet34', pretrained = model_weights)
+        resnet = torch.hub.load('pytorch/vision:v0.5.0', 'resnet34', pretrained = True)
         resnet = nn.Sequential(*(list(resnet.children())[0:8]))
         if model_weights:
             for param in resnet.parameters():
@@ -30,23 +30,25 @@ class decoder(nn.Module):
         super(decoder, self).__init__()
 
         self.bottleneck = nn.Sequential(nn.Linear(1024, 24 * 8 * 8),
-                                        model_layers.reshape([-1,24,8,8])
+                                        reshape([-1,24,8,8])
                                         )
 
-        self.up1 = model_layers.Upsample(24,12)
-        self.up2 = model_layers.Upsample(12,3)
+        self.up1 = Upsample(24,12,scale=7)
+        self.up2 = Upsample(12,6,scale=2)
+        self.up3 = Upsample(6,3)
 
     def forward(self,x):
         x = self.bottleneck(x)
         x = self.up1(x)
         x = self.up2(x)
+        x = self.up3(x)
         return x
 
 class autoencoder(nn.Module):
     def __init__(self, model_weights):
         super(autoencoder, self).__init__()
 
-        self.encoder = encoder(model_weights)
+        self.encoder = encoder()
         self.decoder = decoder()
 
     def encode(self, x): return self.encoder(x)
