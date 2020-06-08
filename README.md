@@ -1,129 +1,110 @@
-# automatic asset classification
+# Automatic Asset Classification
+This readme has a basic overview of the project and results. A full report can be found [here](https://henriwoodcock.github.io/2020/06/07/Automatic-Asset-Classification/) on my website.
 
-## IDEAS
-- flood assets
-- hydraulic modelling
-- pipe material classification ?
-- railway assets
+## Key Takeaways:
+- Asset recognition proves high accuracy through the use of transfer learning.
+- An experimental idea to allow algorithms to cluster assets to find underlying attributes to the assets.
 
-### Flood Assets:
-- Wall
-- Flood gate
-- Open channel
-- Embankment – trapezoidal
-- Reservoir
-- Outfall
-- Weirs – small dams
-- Mesh
-- Control gate
-- Channel crossing bridge
-
-### Pipe Material Classification:
-- Cast Iron
-- Ductile Iron
-- HPPE
-- Steel
-- Spun Iron
-
-### Further:
-- Look at Image space.
+## Contents
+- [Introduction](#introduction)
+- [Data](#data1)
+  - [Data Collection](#data-collection)
+  - [Data Cleaning](#data-cleaning)
+- [Experiment and Notebooks](#experiment-and-Notebooks)
+  - [Models](#models)
+- [Conclusion](#conclusion)
+- [References](#references)
 
 
-------------
-Look at getting a simple flattened auto-encoder to work with k-means or something.
+## Introduction
+This project aims to automate the task of labelling images of assets, this is done by introducing two methods, _Semi-Automatic Asset Classification_ and _Automatic Asset Classification_. Semi-Automatic Asset Classification applies modern best standards of image classification on labelled images on water assets, this provides a way to automate labelling images providing some whereas Automatic Asset Classification is an experimental idea in which an algorithm clusters images of assets. The result may not lead to assets being grouped as currently labelled but could lead to more natural groupings of assets instead of just by how humans have labelled them.
 
+## Data
+The section is going to go through the collection, cleaning and preparation of data ready for the modelling. For this experiment, images of flood and water assets were collected for analysis.
 
-## Datasets
+The final dataset consisted of the following categories:
+- Embankments
+- Flood Gates
+- Flood Walls
+- Outfalls
+- Reservoirs
+- Weirs
 
-- autstialian trunk main dataset:
-https://catalogue.data.wa.gov.au/dataset/activity/water-pipe-wcorp-002
-- water treatment plant dataset:
-https://archive.ics.uci.edu/ml/datasets/Water+Treatment+Plant
-- Distribution input and supply pipe leakage: 1992/93 to 2010/11:
-https://data.gov.uk/dataset/6f916c63-b142-4929-be09-0861b3c0ce6a/distribution-input-and-supply-pipe-leakage-1992-93-to-2010-11/datafile/eccfa62e-a7ad-4aaf-8ed9-089feee36214/preview
+### Data Collection
+Images for the model were collected from google images. This was done with the following technique:
 
-- uk government datasets:
-https://data.gov.uk/search?q=
-
-https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Data%20sets
-
-
-
-## Webscraping for Images
 1. Go to google images
 2. Search your key word. For example "flood gate"
 3. Go to the very bottom of the page (press load more until you cannot anymore)
-4. Open the console on your web browser and enter:
-urls = Array.from(document.querySelectorAll('.rg_di .rg_meta')).map(el=>JSON.parse(el.textContent).ou);
-window.open('data:text/csv;charset=utf-8,' + escape(urls.join('\n')));
-5. Save the csv
+4. Open the console on your web browser and enter: `urls = Array.from(document.querySelectorAll('.rg_di.rg_meta')).map(el=>JSON.parse(el.textContent).ou); window.open('data:text/csv;charset=utf-8,' + escape(urls.join('\n')));`
+5. Save the CSV
 
-This provides you with a database of links to images. This is easier than scraping for the links then downloading the images from the links. However feel free to scrape for the links if not using google images for your data.
+This gives CSV files containing image URL links. This is an effective method for smaller datasets, however, when creating a larger dataset a web scraping algorithm for image links would be more effective.
 
-From trying to classify them into correct or incorrect, the hardest one was the flood gate. A lot of the images online are from a brand called flood gate which makes it hard to find proper flood gates. This model managed to predict wrong 50% of the time as the model never predicted no. This could result in a lower quality of dataset for the final model. Rerunning this managed an accuracy of 75% however it is unsure how accurate this will be on the final dataset as the images are hard to classify even for human.
+The CSV can then be used to download images using the python package `requests`.
 
-flood wall 10 could be a flood wall however when comparing to embankment it would be an embankment, so this one cannot be used in the final dataset. _However could be used in the later autoencoding section._
+```python
+import requests
+result = requests.get(image_url, stream = True)
+```
 
-### Data Clean Up
-A resnet34 model was then used on a basic classificiation model to further clean up the data. This involved create a resnet34 model on the "final" dataset and then plotting the top losses. This should help find images which are not clean / not clear what they are of. A few examples can be seen below. For example a weir can form over a floodwall or a image could be of a reservoir with a outfall in it. Removing these can help create a more accurate model, as if an image has multiple assets in it then this will become confusing for the model.
+### Data Cleaning
+Cleaning the images ready for use in the final model consisted of three parts: removing duplicate images, removing incorrectly labelled images (from the web scrape) and finally cropping images ready for use.
 
-# Goals
-Asset classification without labelling. This will be done with an auto-encoder. This could lead to a future development where AI can help put assets into categories in which humans may struggle with defining said categories. This is a basic example with some very differing examples, but the hope is that it could be used in the future on more confusing assets. For example some assets may be a flood wall made out of sheets however it has been upgraded but the sheet pile is still there. An AI could help make a conclusion as to how to classify this.
+#### Removing Duplicate Images
+To remove duplicate images multiple algorithms were used. The first check was to make sure images were not broken, this could be from corrupted file downloads. This was done with a `try` and `except` block in python by attempting to open all the images. With the broken images removed, the images could then be analysed for duplicates.
 
-A lot of images in asset management are also labelled to just include a location of where the image was taken but not include the type of asset this is, this would then mean that a human would have to go through these images to classify them. Creating a basic classifier model could help speed this up.
+Algorithms used to remove duplicate images:
+- Hash
+- Dhash
+- Hamming Distance
 
-test:
-*hfhsh and  then __this__*
+Code for this section can be found [here](automatic_asset_classification/web_scape)
 
-checkout fast.ai image classification on my gists!!!
+#### Removing Incorrect Images
+Removing incorrect images was done in a semi-automated fashion. For each category of image (such as Flood Wall), the first 50 or so images were labelled as a "yes" or "no" representing whether the current label for the images was correct. This was done through fine-tuning a pretrained Resnet34 model from [PyTorch](https://pytorch.org/hub/pytorch_vision_resnet/).
 
+Once trained on the first 50 images, the model can then be used to predict whether the remaining images are correctly labelled. If the model predicted "yes" the image was kept and if "no" the image was removed.
 
-https://github.com/moondra2017/Computer-Vision/blob/master/DHASH%20AND%20HAMMING%20DISTANCE_Lesson.ipynb
-this is the help for the duplicate images
+Code for this section can also be found [here](automatic_asset_classification/web_scape)
 
+#### Image Cleaning
+After all the above processing, the dataset left is _almost_ final. The last step to prepare the data ready for use is to crop the images so that the object is centred is and so that all images are square. This is all done by hand as to avoid issues with automated algorithms centring on the wrong object arising. While doing this, images can be checked if they were correctly labelled too.
 
-Have a look at Bayesian deep learning it could tell hardest assets to classify.......
-
-imagecleaner to help clean up top losses.
-
-
-## Research
-transfer learning:
-https://medium.com/pytorch/active-transfer-learning-with-pytorch-71ed889f08c1
-self-supervised learning and computer vision:
-https://www.fast.ai/2020/01/13/self_supervised/ - maybe attempt a few of these see which is best for pretraining.
-
-https://www.biorxiv.org/content/10.1101/740548v4 - pretraining
-https://chemrxiv.org/articles/Inductive_Transfer_Learning_for_Molecular_Activity_Prediction_Next-Gen_QSAR_Models_with_MolPMoFiT/9978743/1
-https://github.com/kheyer/Genomic-ULMFiT
-https://www.youtube.com/playlist?list=PLoRl3Ht4JOcdU872GhiYWf6jwrk_SNhz9
-
-### the problem (autoencoders etc):
-- https://medium.com/@s.ganjoo96/autoencoders-with-pytorch-a89ed28f94a9
-- https://www.researchgate.net/profile/Gobert_Lee/publication/4309506_K-means_Clustering_for_Classifying_Unlabelled_MRI_Data/links/0fcfd511b09aa8daa4000000.pdf?origin=publication_detail
-- https://www.cc.gatech.edu/~jyang375/Jianwei_Yang_files/Unsupervised_Learning_JianweiYang.pdf
-https://www.paperswithcode.com/task/image-clustering
+This is done to make sure that all algorithms focus on the correct object in the image (in case an image contains multiple objects). Images are squared as it means that pretrained architectures can be used.
 
 
+## Experiment and Notebooks
+There are two sections to this project, _Semi-Automatic Asset Classification_ and _Automatic Asset Classification_. Semi-Automatic Asset Classification is your basic image classifier and fine-tunes a Resnet 34 model. _Automatic Asset Classification_ uses unlabelled imagery to find underlying features in the images which may help find better groupings of assets.
 
-IDEAS for post (temporary on here):
-- explainable AI: first look at weightings for singular layer AI:
-  https://stats.stackexchange.com/questions/261008/deep-learning-how-do-i-know-which-variables-are-important
-  https://beckmw.wordpress.com/2013/08/12/variable-importance-in-neural-networks/
-  https://towardsdatascience.com/feature-importance-with-neural-network-346eb6205743
+### Semi-Automatic Asset Classification
+- Fine-tuned Resnet 34 model
+- An accuracy of __90%__ on unseen data.
+
+![confusion_matrix](images/final_confusion_matrix.png)
+
+### Automatic Asset Classification
+3 Models are compared and basic overviews of the architecture can be seen below, (the code can be found [here](automatic_asset_classification) for a more indepth look.)
+
+![models](images/AutoencoderDiagrams.png)
 
 
-deconvolution idea
-https://distill.pub/2016/deconv-checkerboard/
+An example plot of one of the clustering models (dimension reduced by TSNE with varying perplexity) with an example of a cluster can be seen below.
+
+![TSNE](images/ResnetAE_all_per.png)
+![cluster_eg](images/resnet_autoencoder_class5.png)
 
 
+More can be found in the [report](https://henriwoodcock.github.io/2020/06/07/Automatic-Asset-Classification/).
 
-Two Ideas:
 
-- __Labelled data__ you can measure the clusters and the loss from different sizes clusters, perhaps try minimise these clusters to create a low dimension representation of images
+## Conclusion
+In conclusion, this report has developed a proof of concept for the use of autoencoders in classifying flood assets. This could be extended to include assets from all domains. Semi-Automatic Asset Classification has shown that with labelled data neural networks can be trained to classify assets to a high accuracy of 90%.
 
-- __Unlabelled data__ find new ways to categorise data
+With unsupervised training, this report has shown neural networks can group assets by some underlying features such as material, environment and risk. 3 models were compared for this section and a Resnet autoencoder proved to be most effective, being able to split up the asset images into more clusters leading to more underlying features. These clusters also had more clear underlying features linking the assets within them together.
 
-- Architecture(s): Encoder - Decoder. Encoder - Classifier / Cluster - Decoder.
+Overall, a combination of both Semi-Automatic and Automatic Asset Classification could be most effective. With Semi-Automatic Asset Classification able to classify assets to their high-level labels which could be combined with Semi-Automatic Asset Classification to add more information to these assets from underlying features found between them.
 
-- How to decide on number of clusters? or will this be visual?
+One of the main drawbacks of this experiment was the size and quality of the dataset. It is hard to find high-quality images of flood assets online and perhaps if this experiment was repeated in-house at a flood defence company better results could be achieved with more clear, higher quality images and a larger set of images.
+
+There are two clear ways to extend this experiment. One way would be to include a dataset with both high level and low-level labels leading to a supervised way to train a network to predict both high-level labels such as asset type and low-level features such as material. The other way would be to use image segmentation to develop a model which could label _all_ assets in one image instead of being limited to one asset per image.

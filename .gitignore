@@ -3,3 +3,9 @@
 *.pth
 Notebooks/.ipynb_checkpoints/
 research/
+
+!images/AutoencoderDiagrams.png
+!images/final_confusion_matrix.png
+!images/ResnetAE_all_per.png
+
+!images/resnet_autoencoder_class5.png
